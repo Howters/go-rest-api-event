@@ -42,7 +42,7 @@ func getEvents(context *gin.Context) {
 }
 
 func createEvent(context *gin.Context) {
-	var event models.Event
+	var event *models.Event
 	//Automatically populate the request body to the event variable
 	err := context.ShouldBindJSON(&event)
 
@@ -54,7 +54,6 @@ func createEvent(context *gin.Context) {
 		return
 	}
 
-	event.ID = 1
 	event.UserID = 1
 	err = event.Save()
 
@@ -147,7 +146,4 @@ func deleteEvent(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{
 		"message" : "Event deleted succesfull",
 	})
-
-
-
 }
