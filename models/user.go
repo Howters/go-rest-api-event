@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/howters/golang/db"
 	"github.com/howters/golang/utils"
 )
@@ -34,4 +36,25 @@ func (u User) Save() error {
 	id, err := result.LastInsertId()
 	u.ID = id
 	return err
+}
+
+func (u User) VerifyCredentials() error {
+	query := `SELECT id, password FROM users
+	WHERE email = ?`
+	row := db.DB.QueryRow(query, u.Email)
+
+	var retrievedPassword string
+	err := row.Scan(&u.ID, &retrievedPassword)
+
+	if err != nil {
+		return err
+	}
+	
+	isValid := utils.CheckPasswordHash(u.Email, retrievedPassword)
+
+	if !isValid {
+		return errors.New("Invalid Credentials!")
+	}
+
+	return nil
 }
